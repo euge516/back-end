@@ -1,4 +1,4 @@
-import { AccountMenuItemDatasource, AccountMenuItemEntity, AccountMenuItemRepository, CreateAccountMenuItemDto, UpdateAccountMenuItemDto } from "../../domain";
+import { AccountMenuItemDatasource,MenuEntity, AccountMenuItemEntity, AccountMenuItemRepository, CreateAccountMenuItemDto, UpdateAccountMenuItemDto } from "../../domain";
 
  export class AccountMenuItemRepositoryInfra implements AccountMenuItemRepository{
     
@@ -8,7 +8,7 @@ import { AccountMenuItemDatasource, AccountMenuItemEntity, AccountMenuItemReposi
      create(createTodoDto: CreateAccountMenuItemDto): Promise<AccountMenuItemEntity> {
         return this.datasource.create( createTodoDto );
      }
-     getAll(Id:string): Promise<AccountMenuItemEntity[]> {
+     getAll(Id:string): Promise<MenuEntity[]> {
         return this.datasource.getAll( Id );
      }
      findById(id: string): Promise<AccountMenuItemEntity> {

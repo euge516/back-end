@@ -13,6 +13,7 @@ export class ProductEntity{
         public readonly ImageUrl: string,
         public readonly PublicIdUrl: string,
         public readonly Description: string,
+        public readonly IsOwn:  boolean,
         public readonly Lot: LotEntity[],
         public readonly Presentation: PresentationEntity,
         public readonly SubCategory: SubCategoryEntity,
@@ -20,7 +21,7 @@ export class ProductEntity{
     ){}
 
     public static fromObject (object:{[key: string]:any}){
-        const{Id,SubCategoryId, PresentationId, SupplierId, Name, ImageUrl,PublicIdUrl, Description, lots, Presentation, SubCategory, Supplier } = object;    
-        return new ProductEntity(Id,SubCategoryId, PresentationId,SupplierId, Name, ImageUrl,PublicIdUrl, Description, lots, Presentation, SubCategory, Supplier );
+        const{Id,SubCategoryId, PresentationId, SupplierId, Name, ImageUrl,PublicIdUrl, Description,IsOwn, lots, Presentation, SubCategory, Supplier } = object;    
+        return new ProductEntity(Id,SubCategoryId, PresentationId,SupplierId, Name, ImageUrl,PublicIdUrl, Description,IsOwn, lots, Presentation, SubCategory, Supplier );
     }
 }

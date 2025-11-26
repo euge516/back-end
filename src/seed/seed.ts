@@ -17,11 +17,35 @@
                 CreatedDate: new Date(),
             },
             {
+                Description: "Para mostrar las ofertas",
+                Name: "Oferta",
+                HasSubMenu: false,
+                Url: "products/offer",
+                Position: 2,
+                CreatedDate: new Date(),                
+            },
+            {
+                Description: "Para mostrar los Beneficios",
+                Name: "Beneficios",
+                HasSubMenu: false,
+                Url: "products/benefit",
+                Position: 3,
+                CreatedDate: new Date(),                
+            },
+            {
+                Description: "Para mostrar nuestras marcas",
+                Name: "Nuestra Marca",
+                HasSubMenu: false,
+                Url: "products/brand",
+                Position: 4,
+                CreatedDate: new Date(),                
+            },
+            {
                 Description: "Para contactar",
                 Name: "Contacto",
                 HasSubMenu: false,
                 Url: "products/Contact",
-                Position: 2,
+                Position: 7,
                 CreatedDate: new Date(),                
             },
             {
@@ -29,7 +53,7 @@
                 Name: "Asignar menu",
                 HasSubMenu: false,
                 Url: "products/assignmenu",
-                Position: 4,
+                Position: 6,
                 CreatedDate: new Date(),                
             },
             
@@ -89,7 +113,7 @@
             Name: "ABM",
             HasSubMenu: true,
             Url: " ",
-            Position: 3,
+            Position: 5,
             CreatedDate: new Date(),
             SubMenu: {
                 create: [

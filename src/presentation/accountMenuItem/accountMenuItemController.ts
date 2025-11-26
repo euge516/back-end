@@ -18,6 +18,7 @@ export class AccountMenuItemController{
         .execute(id)
         .then( todos => res.json( todos ))
         .catch ( error =>  {
+            console.log(error);
             if( error instanceof PrismaClientKnownRequestError)
                 return ErrorSpecific.ErrorDB( error );
             return res.status(404).json({ error })}

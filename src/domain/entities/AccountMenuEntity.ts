@@ -6,7 +6,7 @@ export class AccountMenuEntity{
         public readonly Id: string,
         public readonly MenuId: string,
         public readonly AccountId: string,
-        public readonly Menu: MenuEntity,
+        public readonly Menu: MenuEntity[],
 
         public readonly Account: AccountEntity,
         // public readonly subMenu: SubMenuEntity[],

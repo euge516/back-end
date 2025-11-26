@@ -74,7 +74,7 @@ export class UserDataSourceInfra implements UserDatasource {
 
        for (let index = 0; index < menu.length; index++) {
         const element = menu[index];
-        if( element.Name === 'Categoria' || element.Name === 'Inicio' || element.Name ==='Contacto'){
+        if( element.Name !== 'ABM' && element.Name !== 'Asignar menu'){
           let accountmenu = await tx.accountMenus.create({
               data:{
                 MenuId:element.Id,

@@ -40,8 +40,6 @@ export class AuthController{
 
     public logout = (req:any, res:Response) =>{
 
-        console.log("antes de token: ");
-
         const token = req.headers.authorization?.replace('Bearer ', '');
         if (token) {
            req.userlogin = null;

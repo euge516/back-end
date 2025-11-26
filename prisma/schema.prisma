@@ -226,6 +226,7 @@ model Products {
   Description    String?   @db.VarChar(120)
   CreatedDate    DateTime  @db.Timestamp()
   FinalDate      DateTime?
+  IsOwn          Boolean   @default(false)
   State          Int       @default(1)
 
   SubCategory  SubCategories @relation(fields: [SubCategoryId], references: [Id])

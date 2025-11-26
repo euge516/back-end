@@ -21,4 +21,7 @@ export const envs ={
     CLOUD_URL: get('CLOUD_URL').required().asString(),
     VERSION: get('VERSION').default('v1').asString(),   
     BASE_UPLOAD_PRESET: get('BASE_UPLOAD_PRESET').required().asString(),
+
+    STRIPE_SECRET_KEY: get('STRIPE_SECRET_KEY').required().asString(),
+    STRIPE_PUBLIC_KEY: get('STRIPE_PUBLIC_KEY').required().asString(),
 }

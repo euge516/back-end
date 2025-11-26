@@ -11,6 +11,7 @@ export class CreateProductDto{
         public readonly ImageUrl: string,
         public readonly PublicIdUrl: string,
         public readonly Description: string,
+        public readonly IsOwn:  boolean,
         public readonly lot: CreateLotDto
     ){}
 
@@ -23,14 +24,15 @@ export class CreateProductDto{
         if ( this.Name )  returnObj.Name = this.Name;
         if ( this.ImageUrl ) returnObj.ImageUrl = this.ImageUrl;
         if ( this.PublicIdUrl ) returnObj.PublicIdUrl = this.PublicIdUrl;
-        if ( this.Description )  returnObj.Description = this.Description;   
+        if ( this.Description )  returnObj.Description = this.Description;  
+        if ( this.IsOwn )  returnObj.IsOwn = this.IsOwn;  
         if ( this.lot )  returnObj.lot = this.lot;        
 
         return returnObj;
     }
 
     static create(props:{[key:string]:any}):[JsonObject?,CreateProductDto?]{
-        const{SubCategoryId, PresentationId,SupplierId, Name, ImageUrl,PublicIdUrl, Description,lot } = props;
+        const{SubCategoryId, PresentationId,SupplierId, Name, ImageUrl,PublicIdUrl, Description,IsOwn,lot } = props;
 
         if ( !SubCategoryId ) return [ErrorSpecific.ErrorEmpty('Debe seleccionar la subcategoria del producto'),undefined]; 
         if ( !SubCategoryId ) return [ErrorSpecific.ErrorEmpty('Debe seleccionar la subcategoria del producto'),undefined]; 
@@ -40,6 +42,6 @@ export class CreateProductDto{
         const [errorLot, lotDto] = CreateLotDto.create(lot);
         if ( errorLot) return [errorLot, undefined];
 
-        return [undefined, new CreateProductDto(SubCategoryId, PresentationId,SupplierId, Name, ImageUrl,PublicIdUrl, Description,lotDto! )]
+        return [undefined, new CreateProductDto(SubCategoryId, PresentationId,SupplierId, Name, ImageUrl,PublicIdUrl, Description,IsOwn,lotDto! )]
     }
 }
