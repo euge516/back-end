@@ -138,6 +138,9 @@ export class UserDataSourceInfra implements UserDatasource {
 
 async getAll(): Promise<UserEntity[]> {  
   const users = await prisma.users.findMany({  
+    where: {
+      State: 1
+    },
     include: {  
       Accounts: {  
         include: {  
@@ -153,10 +156,12 @@ async getAll(): Promise<UserEntity[]> {
     const user = await prisma.users.findFirst({
       include: {
         Accounts: true,
+        Addresses: true,
       },
       where: {
         Id: id,
       },
+      
     });
 
     if (!user) throw ErrorSpecific.ErrorEmpty(`Id usuario:  ${id} no encontrado`);

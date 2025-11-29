@@ -50,63 +50,111 @@ class UserDataSourceInfra {
     }
     create(createuserDto, auth) {
         return __awaiter(this, void 0, void 0, function* () {
-            const existUser = yield data_1.prisma.users.findFirst({
-                where: { Email: createuserDto.Email },
-                select: { Email: true },
-            });
-            let role = yield data_1.prisma.roles.findFirst({ where: { Name: "Empleado" } });
-            let roleId = auth.RoleId == undefined ? auth.RoleId : role === null || role === void 0 ? void 0 : role.Id;
-            if (existUser)
-                throw custom_error_1.CustomError.badRequest("Ya existio ese email");
-            let pass = bcrypt_adapter_1.bcryptAdapter.has(auth.UserPass);
-            const User = yield data_1.prisma.users.create({
-                data: {
-                    FirstName: createuserDto.FirstName,
-                    LastName: createuserDto.LastName,
-                    State: 1,
-                    PhoneNumber: createuserDto.Phone,
-                    Email: createuserDto.Email,
-                    CreatedDate: new Date(Date.now()),
-                    Accounts: {
-                        create: [
-                            {
-                                UserName: auth.UserName,
-                                RoleId: roleId,
-                                State: 1,
-                                UserPass: pass,
-                                CreatedDate: new Date(Date.now()),
-                                EmailValidated: false,
+            try {
+                return yield data_1.prisma.$transaction((tx) => __awaiter(this, void 0, void 0, function* () {
+                    const existUser = yield data_1.prisma.users.findFirst({
+                        where: { Email: createuserDto.Email },
+                        select: { Email: true },
+                    });
+                    let role = yield data_1.prisma.roles.findFirst({
+                        where: { Name: "Usuario" },
+                    });
+                    let roleId = auth.RoleId == undefined ? auth.RoleId : role === null || role === void 0 ? void 0 : role.Id;
+                    if (existUser)
+                        throw custom_error_1.CustomError.badRequest("Ya existio ese email");
+                    let pass = bcrypt_adapter_1.bcryptAdapter.has(auth.UserPass);
+                    const User = yield tx.users.create({
+                        data: {
+                            FirstName: createuserDto.FirstName,
+                            LastName: createuserDto.LastName,
+                            State: 1,
+                            PhoneNumber: createuserDto.Phone,
+                            Email: createuserDto.Email,
+                            CreatedDate: new Date(Date.now()),
+                            Addresses: {
+                                create: [
+                                    {
+                                        Between: createuserDto.Address.BetweenStreet,
+                                        CreatedDate: new Date(Date.now()),
+                                        Country: createuserDto.Address.Country,
+                                        Province: createuserDto.Address.Province,
+                                        Location: createuserDto.Address.Location,
+                                        Number: createuserDto.Address.StreetNumber,
+                                        Street: createuserDto.Address.Street,
+                                    },
+                                ],
                             },
-                        ],
-                    },
-                    Addresses: {
-                        create: [
-                            {
-                                Between: createuserDto.Address.BetweenStreet,
-                                CreatedDate: new Date(Date.now()),
-                                Country: createuserDto.Address.Country,
-                                Province: createuserDto.Address.Province,
-                                Location: createuserDto.Address.Location,
-                                Number: createuserDto.Address.StreetNumber,
-                                Street: createuserDto.Address.Street,
-                            },
-                        ],
-                    },
-                },
-            });
-            //* JWT <----- Para mantener la autencation
-            const token = yield jwt_adapter_1.JwtAdapter.generateToken({
-                UserId: User.Id,
-                RoleId: roleId,
-                UserName: auth.UserName,
-                Email: User.Email,
-                Role: role === null || role === void 0 ? void 0 : role.Name
-            });
-            yield this.sendEmailValidattionLink(token, User.Email, User.FirstName + " " + User.LastName);
-            return {
-                UserName: auth.UserName,
-                token: token,
-            };
+                        },
+                    });
+                    let account = yield tx.accounts.create({
+                        data: {
+                            UserId: User.Id,
+                            UserName: auth.UserName,
+                            RoleId: roleId,
+                            State: 1,
+                            UserPass: pass,
+                            CreatedDate: new Date(Date.now()),
+                            EmailValidated: false,
+                        }
+                    });
+                    let menu = yield data_1.prisma.menues.findMany({
+                        where: {
+                            State: 1
+                        }
+                    });
+                    for (let index = 0; index < menu.length; index++) {
+                        const element = menu[index];
+                        if (element.Name !== 'ABM' && element.Name !== 'Asignar menu') {
+                            let accountmenu = yield tx.accountMenus.create({
+                                data: {
+                                    MenuId: element.Id,
+                                    AccountId: account.Id,
+                                    CreatedDate: new Date(Date.now()),
+                                }
+                            });
+                            let submenu = yield data_1.prisma.subMenues.findMany({
+                                where: {
+                                    AND: [
+                                        { MenuId: element.Id },
+                                        { State: 1 }
+                                    ]
+                                }
+                            });
+                            for (let index = 0; index < submenu.length; index++) {
+                                const element = submenu[index];
+                                yield tx.accountMenuItem.create({
+                                    data: {
+                                        SubMenuId: element.Id,
+                                        AccountMenuId: accountmenu.Id,
+                                        AccountId: account.Id
+                                    }
+                                });
+                            }
+                        }
+                    }
+                    //* JWT <----- Para mantener la autencation
+                    const token = yield jwt_adapter_1.JwtAdapter.generateToken({
+                        Id: account.Id,
+                        UserId: User.Id,
+                        RoleId: roleId,
+                        UserName: auth.UserName,
+                        Email: User.Email,
+                        Role: role === null || role === void 0 ? void 0 : role.Name,
+                    });
+                    yield this.sendEmailValidattionLink(token, User.Email, User.FirstName + " " + User.LastName);
+                    return {
+                        UserName: auth.UserName,
+                        token: token,
+                    };
+                }));
+            }
+            catch (error) {
+                console.error("Transaccion fallido: ", error);
+                throw error;
+            }
+            finally {
+                yield data_1.prisma.$disconnect();
+            }
         });
     }
     getAll() {
@@ -141,12 +189,17 @@ class UserDataSourceInfra {
     }
     updateById(updateUserDto) {
         return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b, _c;
+            console.log('ID en datasource:', updateUserDto.Id);
+            console.log('updateUserDto.Values:', updateUserDto.Values);
             yield this.findById(updateUserDto.Id);
+            const updateData = Object.assign({}, updateUserDto.Values);
+            if (((_c = (_b = (_a = updateData.Accounts) === null || _a === void 0 ? void 0 : _a.update) === null || _b === void 0 ? void 0 : _b.data) === null || _c === void 0 ? void 0 : _c.UserPass) === '') {
+                delete updateData.Accounts.update.data.UserPass;
+            }
             const updatedContact = yield data_1.prisma.users.update({
-                where: {
-                    Id: updateUserDto.Id,
-                },
-                data: updateUserDto.Values,
+                where: { Id: updateUserDto.Id },
+                data: updateData,
             });
             return user_entity_1.UserEntity.fromObject(updatedContact);
         });

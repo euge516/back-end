@@ -19,6 +19,8 @@ const path_1 = __importDefault(require("path"));
 const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
 const cors_1 = __importDefault(require("cors"));
 const swagger_1 = __importDefault(require("./../swagger"));
+const bigint_serializer_1 = require("../utils/bigint-serializer");
+const bigint_middleware_1 = require("../Middlewares/bigint-middleware");
 class Server {
     constructor(options) {
         this.app = (0, express_1.default)();
@@ -29,11 +31,13 @@ class Server {
     }
     start() {
         return __awaiter(this, void 0, void 0, function* () {
+            (0, bigint_serializer_1.configureBigIntSerialization)();
             //** Middlewares */
             this.app.use(express_1.default.json()); //* To transform the data to raw json example
             this.app.use(express_1.default.urlencoded({ extended: true })); //* In case you send the data in another way, for example x-www-form-urlencoded
             this.app.use((0, compression_1.default)());
             this.app.use((0, cors_1.default)());
+            this.app.use(bigint_middleware_1.bigIntSerializer);
             //** Public folder */
             this.app.use(express_1.default.static(this.publicPath));
             //** Routes */

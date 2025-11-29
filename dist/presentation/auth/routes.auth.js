@@ -13,6 +13,8 @@ class AuthRoutes {
         const todoRepository = new auth_repository_infra_1.AuthRepositoryInfra(datasource);
         const ctrl = new authController_1.AuthController(todoRepository);
         router.post('/', ctrl.login);
+        router.post('/logout', ctrl.logout);
+        router.get('/allaccount', ctrl.allAccount);
         router.get('/validate-email/:token', ctrl.validateEmail);
         router.use(authtoken_1.AuthToken);
         router.put('/change/:id', authtoken_1.AuthToken, ctrl.ChangePassword);
