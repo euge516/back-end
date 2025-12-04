@@ -20,4 +20,6 @@ exports.envs = {
     CLOUD_URL: (0, env_var_1.get)('CLOUD_URL').required().asString(),
     VERSION: (0, env_var_1.get)('VERSION').default('v1').asString(),
     BASE_UPLOAD_PRESET: (0, env_var_1.get)('BASE_UPLOAD_PRESET').required().asString(),
+    STRIPE_SECRET_KEY: (0, env_var_1.get)('STRIPE_SECRET_KEY').required().asString(),
+    STRIPE_PUBLIC_KEY: (0, env_var_1.get)('STRIPE_PUBLIC_KEY').required().asString(),
 };

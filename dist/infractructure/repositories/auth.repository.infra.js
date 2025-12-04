@@ -5,6 +5,9 @@ class AuthRepositoryInfra {
     constructor(datasource) {
         this.datasource = datasource;
     }
+    AllAccount() {
+        return this.datasource.AllAccount();
+    }
     Login(LoginUser) {
         return this.datasource.Login(LoginUser);
     }

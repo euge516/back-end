@@ -13,12 +13,33 @@ exports.AuthDataSourceInfra = void 0;
 const bcrypt_adapter_1 = require("../../config/bcrypt.adapter");
 const jwt_adapter_1 = require("../../config/jwt.adapter");
 const data_1 = require("../../data");
+const domain_1 = require("../../domain");
 const custom_error_1 = require("../../helpers/error/custom.error");
 const helpers_1 = require("../../helpers");
 class AuthDataSourceInfra {
-    // constructor(
-    //     // private readonly emailService: EmailService
-    // ){}
+    AllAccount() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const existUser = yield data_1.prisma.accounts.findMany({
+                where: {
+                    State: 1
+                },
+                include: {
+                    Role: true,
+                    User: true,
+                    AccountMenu: {
+                        include: {
+                            Menu: {
+                                include: {
+                                    SubMenu: true
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            return existUser.map(entity => domain_1.AccountEntity.fromObject(entity));
+        });
+    }
     Login(dto) {
         return __awaiter(this, void 0, void 0, function* () {
             const existUser = yield data_1.prisma.accounts.findFirst({
@@ -38,6 +59,7 @@ class AuthDataSourceInfra {
             if (!isMatching)
                 throw custom_error_1.CustomError.badRequest('Usuario y/o contraseña incorrecto');
             let createtoken = yield jwt_adapter_1.JwtAdapter.generateToken({
+                Id: existUser.Id,
                 UserId: existUser.UserId,
                 RoleId: existUser.RoleId,
                 UserName: existUser.UserName,
