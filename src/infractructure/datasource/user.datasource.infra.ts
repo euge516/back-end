@@ -138,9 +138,6 @@ export class UserDataSourceInfra implements UserDatasource {
 
 async getAll(): Promise<UserEntity[]> {  
   const users = await prisma.users.findMany({  
-    where: {
-      State: 1
-    },
     include: {  
       Accounts: {  
         include: {  
